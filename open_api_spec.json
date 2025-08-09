@@ -1,0 +1,1050 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+      "title": "Research Query Processing Tools",
+      "description": "AI-powered tools for processing and answering research queries through watsonx Orchestrate",
+      "version": "1.0.0"
+    },
+    "paths": {
+      "/clarification-agent": {
+        "post": {
+          "summary": "Clarification Agent",
+          "description": "Refines user queries through iterative questioning to improve precision",
+          "operationId": "clarification_agent_clarification_agent_post",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClarificationRequest"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ClarificationResponse"
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/sql-query-generator": {
+        "post": {
+          "summary": "SQL Query Generator",
+          "description": "Converts natural language queries into SQL based on appropriate schema",
+          "operationId": "sql_query_generator_sql_query_generator_post",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SQLQueryRequest"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/SQLQueryResponse"
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/cloud-ratings-sql": {
+        "post": {
+          "summary": "Cloud Ratings SQL Generator",
+          "description": "Generates SQLite queries for the cloud ratings database",
+          "operationId": "cloud_ratings_sql_generator_cloud_ratings_sql_post",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CloudRatingsSQLRequest"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/CloudRatingsSQLResponse"
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/cloud-ratings-sql-execute": {
+        "post": {
+          "summary": "Cloud Ratings SQL Executor",
+          "description": "Generates and executes SQLite queries for cloud ratings database, returning actual results",
+          "operationId": "cloud_ratings_sql_executor_cloud_ratings_sql_execute_post",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CloudRatingsSQLExecutionRequest"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/CloudRatingsSQLExecutionResponse"
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/vector-search": {
+        "post": {
+          "summary": "Vector Database Search",
+          "description": "Performs similarity search on vector database using clarified query and SQL results",
+          "operationId": "vector_search_vector_search_post",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VectorSearchRequest"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/VectorSearchResponse"
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/test-answer": {
+        "post": {
+          "summary": "Test Answer Generator",
+          "description": "Simple test version of the answer generator",
+          "operationId": "test_answer_generator_test_answer_post",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CohesiveAnswerRequest"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/CohesiveAnswerResponse"
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/cohesive-answer": {
+        "post": {
+          "summary": "Cohesive Answer Generator",
+          "description": "Generates comprehensive answers from vector search results",
+          "operationId": "cohesive_answer_generator_cohesive_answer_post",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CohesiveAnswerRequest"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/CohesiveAnswerResponse"
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/research-pipeline": {
+        "post": {
+          "summary": "Combined Research Pipeline",
+          "description": "Complete research pipeline: takes a question and returns a comprehensive answer",
+          "operationId": "combined_research_pipeline_research_pipeline_post",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CombinedResearchRequest"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/CombinedResearchResponse"
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/health": {
+        "get": {
+          "summary": "Health Check",
+          "description": "Check if the service is running",
+          "operationId": "health_check_health_get",
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+  
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/": {
+        "get": {
+          "summary": "Service Information",
+          "description": "Get information about the service",
+          "operationId": "root__get",
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+  
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "ClarificationRequest": {
+          "properties": {
+            "user_query": {
+              "type": "string",
+              "title": "User Query",
+              "description": "The user's initial or follow-up query"
+            },
+            "session_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Session Id",
+              "description": "Session ID for maintaining conversation state"
+            },
+            "previous_questions": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Previous Questions",
+              "description": "Previously asked clarification questions",
+              "default": []
+            },
+            "previous_answers": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Previous Answers",
+              "description": "User's previous answers",
+              "default": []
+            }
+          },
+          "type": "object",
+          "required": [
+            "user_query"
+          ],
+          "title": "ClarificationRequest",
+          "description": "Request model for clarification agent"
+        },
+        "ClarificationResponse": {
+          "properties": {
+            "session_id": {
+              "type": "string",
+              "title": "Session Id",
+              "description": "Session ID for tracking conversation"
+            },
+            "question": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Question",
+              "description": "Next clarification question to ask user"
+            },
+            "status": {
+              "$ref": "#/components/schemas/QueryStatus",
+              "description": "Current status of clarification process"
+            },
+            "clarified_query": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Clarified Query",
+              "description": "Final clarified query when complete"
+            },
+            "question_count": {
+              "type": "integer",
+              "title": "Question Count",
+              "description": "Number of questions asked so far"
+            }
+          },
+          "type": "object",
+          "required": [
+            "session_id",
+            "status",
+            "question_count"
+          ],
+          "title": "ClarificationResponse",
+          "description": "Response model for clarification agent"
+        },
+        "CloudRatingsSQLExecutionRequest": {
+          "properties": {
+            "question": {
+              "type": "string",
+              "title": "Question",
+              "description": "Natural language question about cloud ratings data"
+            },
+            "execute_query": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Execute Query",
+              "description": "Whether to execute the generated query",
+              "default": true
+            },
+            "query_type": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Query Type",
+              "description": "Type of query: analysis, comparison, ranking, or specific",
+              "default": "analysis"
+            }
+          },
+          "type": "object",
+          "required": [
+            "question"
+          ],
+          "title": "CloudRatingsSQLExecutionRequest",
+          "description": "Request model for cloud ratings SQL query execution"
+        },
+        "CloudRatingsSQLExecutionResponse": {
+          "properties": {
+            "sql_query": {
+              "type": "string",
+              "title": "Sql Query",
+              "description": "Generated SQLite query"
+            },
+            "query_results": {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array",
+              "title": "Query Results",
+              "description": "Actual query execution results"
+            },
+            "column_names": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array",
+              "title": "Column Names",
+              "description": "Names of columns in the results"
+            },
+            "row_count": {
+              "type": "integer",
+              "title": "Row Count",
+              "description": "Number of rows returned"
+            },
+            "execution_time": {
+              "type": "number",
+              "title": "Execution Time",
+              "description": "Query execution time in seconds"
+            },
+            "explanation": {
+              "type": "string",
+              "title": "Explanation",
+              "description": "Explanation of what the query does"
+            },
+            "confidence_score": {
+              "type": "number",
+              "title": "Confidence Score",
+              "description": "Confidence in query accuracy (0-1)"
+            },
+            "query_type": {
+              "type": "string",
+              "title": "Query Type",
+              "description": "Detected type of query"
+            }
+          },
+          "type": "object",
+          "required": [
+            "sql_query",
+            "query_results",
+            "column_names",
+            "row_count",
+            "execution_time",
+            "explanation",
+            "confidence_score",
+            "query_type"
+          ],
+          "title": "CloudRatingsSQLExecutionResponse",
+          "description": "Response model for cloud ratings SQL query execution with results"
+        },
+        "CloudRatingsSQLRequest": {
+          "properties": {
+            "question": {
+              "type": "string",
+              "title": "Question",
+              "description": "Natural language question about cloud ratings data"
+            },
+            "query_type": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Query Type",
+              "description": "Type of query: analysis, comparison, ranking, or specific",
+              "default": "analysis"
+            }
+          },
+          "type": "object",
+          "required": [
+            "question"
+          ],
+          "title": "CloudRatingsSQLRequest",
+          "description": "Request model for cloud ratings SQL query generation"
+        },
+        "CloudRatingsSQLResponse": {
+          "properties": {
+            "sql_query": {
+              "type": "string",
+              "title": "Sql Query",
+              "description": "Generated SQLite query for cloud ratings database"
+            },
+            "explanation": {
+              "type": "string",
+              "title": "Explanation",
+              "description": "Explanation of what the query does"
+            },
+            "example_usage": {
+              "type": "string",
+              "title": "Example Usage",
+              "description": "Example of how to execute the query"
+            },
+            "confidence_score": {
+              "type": "number",
+              "title": "Confidence Score",
+              "description": "Confidence in query accuracy (0-1)"
+            },
+            "query_type": {
+              "type": "string",
+              "title": "Query Type",
+              "description": "Detected type of query"
+            },
+            "estimated_results": {
+              "type": "string",
+              "title": "Estimated Results",
+              "description": "Description of expected results"
+            }
+          },
+          "type": "object",
+          "required": [
+            "sql_query",
+            "explanation",
+            "example_usage",
+            "confidence_score",
+            "query_type",
+            "estimated_results"
+          ],
+          "title": "CloudRatingsSQLResponse",
+          "description": "Response model for cloud ratings SQL query generation"
+        },
+        "CohesiveAnswerRequest": {
+          "properties": {
+            "original_query": {
+              "type": "string",
+              "title": "Original Query",
+              "description": "The user's original research question"
+            },
+            "vector_results": {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array",
+              "title": "Vector Results",
+              "description": "Results from vector database search"
+            },
+            "sql_context": {
+              "anyOf": [
+                {
+                  "items": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Sql Context",
+              "description": "Additional SQL query results",
+              "default": []
+            }
+          },
+          "type": "object",
+          "required": [
+            "original_query",
+            "vector_results"
+          ],
+          "title": "CohesiveAnswerRequest",
+          "description": "Request model for cohesive answer generation"
+        },
+        "CohesiveAnswerResponse": {
+          "properties": {
+            "answer": {
+              "type": "string",
+              "title": "Answer",
+              "description": "Comprehensive answer to the user's question"
+            },
+            "sources": {
+              "items": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              "type": "array",
+              "title": "Sources",
+              "description": "Sources and references used"
+            },
+            "confidence_score": {
+              "type": "number",
+              "title": "Confidence Score",
+              "description": "Confidence in the answer quality (0-1)"
+            },
+            "additional_recommendations": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Additional Recommendations",
+              "description": "Additional research suggestions",
+              "default": []
+            }
+          },
+          "type": "object",
+          "required": [
+            "answer",
+            "sources",
+            "confidence_score"
+          ],
+          "title": "CohesiveAnswerResponse",
+          "description": "Response model for cohesive answer generation"
+        },
+        "CombinedResearchRequest": {
+          "properties": {
+            "question": {
+              "type": "string",
+              "title": "Question",
+              "description": "The user's research question"
+            },
+            "max_clarification_questions": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Max Clarification Questions",
+              "description": "Maximum clarification questions to ask (0-3)",
+              "default": 2
+            },
+            "max_results": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Max Results",
+              "description": "Maximum number of vector search results",
+              "default": 10
+            },
+            "skip_clarification": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Skip Clarification",
+              "description": "Skip clarification step and proceed directly",
+              "default": false
+            }
+          },
+          "type": "object",
+          "required": [
+            "question"
+          ],
+          "title": "CombinedResearchRequest",
+          "description": "Request model for combined research pipeline"
+        },
+        "CombinedResearchResponse": {
+          "properties": {
+            "original_question": {
+              "type": "string",
+              "title": "Original Question",
+              "description": "The original user question"
+            },
+            "clarified_query": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Clarified Query",
+              "description": "The clarified query after processing"
+            },
+            "final_answer": {
+              "type": "string",
+              "title": "Final Answer",
+              "description": "The comprehensive final answer"
+            },
+            "sources": {
+              "items": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              "type": "array",
+              "title": "Sources",
+              "description": "Sources and references used"
+            },
+            "confidence_score": {
+              "type": "number",
+              "title": "Confidence Score",
+              "description": "Overall confidence in the answer (0-1)"
+            },
+            "additional_recommendations": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array",
+              "title": "Additional Recommendations",
+              "description": "Additional research suggestions"
+            },
+            "processing_metadata": {
+              "additionalProperties": true,
+              "type": "object",
+              "title": "Processing Metadata",
+              "description": "Metadata about the processing pipeline"
+            }
+          },
+          "type": "object",
+          "required": [
+            "original_question",
+            "final_answer",
+            "sources",
+            "confidence_score",
+            "additional_recommendations",
+            "processing_metadata"
+          ],
+          "title": "CombinedResearchResponse",
+          "description": "Response model for combined research pipeline"
+        },
+        "HTTPValidationError": {
+          "properties": {
+            "detail": {
+              "items": {
+                "$ref": "#/components/schemas/ValidationError"
+              },
+              "type": "array",
+              "title": "Detail"
+            }
+          },
+          "type": "object",
+          "title": "HTTPValidationError"
+        },
+        "QueryStatus": {
+          "type": "string",
+          "enum": [
+            "in_progress",
+            "complete",
+            "needs_clarification"
+          ],
+          "title": "QueryStatus",
+          "description": "Status of query processing"
+        },
+        "SQLQueryRequest": {
+          "properties": {
+            "clarified_query": {
+              "type": "string",
+              "title": "Clarified Query",
+              "description": "The user's clarified research question"
+            },
+            "schema_context": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Schema Context",
+              "description": "Additional schema context if available"
+            }
+          },
+          "type": "object",
+          "required": [
+            "clarified_query"
+          ],
+          "title": "SQLQueryRequest",
+          "description": "Request model for SQL query generation"
+        },
+        "SQLQueryResponse": {
+          "properties": {
+            "sql_query": {
+              "type": "string",
+              "title": "Sql Query",
+              "description": "Generated SQL query"
+            },
+            "explanation": {
+              "type": "string",
+              "title": "Explanation",
+              "description": "Explanation of the SQL query logic"
+            },
+            "estimated_relevance": {
+              "type": "number",
+              "title": "Estimated Relevance",
+              "description": "Confidence score for query relevance (0-1)"
+            }
+          },
+          "type": "object",
+          "required": [
+            "sql_query",
+            "explanation",
+            "estimated_relevance"
+          ],
+          "title": "SQLQueryResponse",
+          "description": "Response model for SQL query generation"
+        },
+        "ValidationError": {
+          "properties": {
+            "loc": {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "array",
+              "title": "Location"
+            },
+            "msg": {
+              "type": "string",
+              "title": "Message"
+            },
+            "type": {
+              "type": "string",
+              "title": "Error Type"
+            }
+          },
+          "type": "object",
+          "required": [
+            "loc",
+            "msg",
+            "type"
+          ],
+          "title": "ValidationError"
+        },
+        "VectorSearchRequest": {
+          "properties": {
+            "clarified_query": {
+              "type": "string",
+              "title": "Clarified Query",
+              "description": "The user's clarified research question"
+            },
+            "sql_results": {
+              "anyOf": [
+                {
+                  "items": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Sql Results",
+              "description": "Results from SQL query execution",
+              "default": []
+            },
+            "max_results": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Max Results",
+              "description": "Maximum number of results to return",
+              "default": 10
+            }
+          },
+          "type": "object",
+          "required": [
+            "clarified_query"
+          ],
+          "title": "VectorSearchRequest",
+          "description": "Request model for vector database search"
+        },
+        "VectorSearchResponse": {
+          "properties": {
+            "results": {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array",
+              "title": "Results",
+              "description": "Vector search results with similarity scores"
+            },
+            "total_found": {
+              "type": "integer",
+              "title": "Total Found",
+              "description": "Total number of matching documents"
+            },
+            "search_metadata": {
+              "additionalProperties": true,
+              "type": "object",
+              "title": "Search Metadata",
+              "description": "Metadata about the search execution"
+            }
+          },
+          "type": "object",
+          "required": [
+            "results",
+            "total_found",
+            "search_metadata"
+          ],
+          "title": "VectorSearchResponse",
+          "description": "Response model for vector database search"
+        }
+      }
+    }
+  }
