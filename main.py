@@ -1548,7 +1548,8 @@ if __name__ == "__main__":
     import uvicorn
     
     # Use PORT environment variable for Code Engine compatibility
-    port = int(os.getenv("PORT", 8000))
+    port = int(os.getenv("PORT", 8080))
     
     logger.info(f"Starting server on port {port}")
     uvicorn.run(app, host="0.0.0.0", port=port)
+
