@@ -1,0 +1,23 @@
+# Copy this file to .env and fill in your actual values
+
+# Base Elasticsearch URL (no trailing slash). Include protocol (http/https)
+ES_URL=https://your-elasticsearch-instance.cloud
+
+# Optional: custom port if your service uses one (e.g., 32000). Leave empty if not needed.
+ES_PORT=your_port_number
+
+# Credentials
+ES_USER=your_elasticsearch_username
+ES_PASS=your_elasticsearch_password
+
+# Index name
+INDEX=providers
+
+# Data and model paths
+JSON_PATH_1=/path/to/your/clouds.json
+JSON_PATH_2=/path/to/your/cloud_best_practices.json
+
+MODEL_NAME=sentence-transformers/all-MiniLM-L6-v2
+
+# OpenAI API Key for GPT integration
+OPENAI_API_KEY=your_openai_api_key_here
