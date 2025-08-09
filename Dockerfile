@@ -23,12 +23,23 @@ COPY . .
 # Create directory for SQLite database
 RUN mkdir -p /app/data
 
+# Configure writable cache locations for Hugging Face/Transformers
+# and SentenceTransformers. Keep caches under /app (owned by appuser).
+ENV HF_HOME=/app/.cache/hf \
+    TRANSFORMERS_CACHE=/app/.cache/hf/transformers \
+    HUGGINGFACE_HUB_CACHE=/app/.cache/hf/hub \
+    SENTENCE_TRANSFORMERS_HOME=/app/.cache/sentence-transformers
+
+# Pre-create cache and logs directories
+RUN mkdir -p /app/.cache/hf/transformers /app/.cache/hf/hub /app/.cache/sentence-transformers /app/logs
+
 # Create the cloud ratings database during build
 RUN python create_cloud_ratings_database.py
 
-# Create non-root user for security
-RUN groupadd -r appuser && useradd -r -g appuser appuser
-RUN chown -R appuser:appuser /app
+# Create non-root user for security (with home directory) and set HOME
+RUN groupadd -r appuser && useradd -m -r -g appuser appuser
+ENV HOME=/home/appuser
+RUN chown -R appuser:appuser /app /home/appuser
 USER appuser
 
 # Expose port (IBM Code Engine standard)
