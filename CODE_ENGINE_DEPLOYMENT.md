@@ -14,7 +14,7 @@
 3. **Test locally with Docker**:
    ```bash
    docker build -t research-api .
-   docker run -p 8000:8000 --env-file .env research-api
+   docker run -p 8080:8080 --env-file .env research-api
    ```
 
 ### Step 2: Deploy to Code Engine
@@ -32,10 +32,10 @@ ibmcloud ce application create \
   --name research-query-api \
   --build-source . \
   --build-strategy dockerfile \
-  --port 8000 \
+  --port 8080 \
   --env-from-secret elasticsearch-creds \
   --env-from-secret openai-creds \
-  --env PORT=8000 \
+  --env PORT=8080 \
   --env DB_PATH=/app/data/cloud_ratings.db \
   --env LOG_LEVEL=INFO \
   --cpu 1 \
@@ -53,10 +53,10 @@ ibmcloud cr build -t us.icr.io/YOUR_NAMESPACE/research-api .
 ibmcloud ce application create \
   --name research-query-api \
   --image us.icr.io/YOUR_NAMESPACE/research-api \
-  --port 8000 \
+  --port 8080 \
   --env-from-secret elasticsearch-creds \
   --env-from-secret openai-creds \
-  --env PORT=8000 \
+  --env PORT=8080 \
   --env DB_PATH=/app/data/cloud_ratings.db \
   --cpu 1 \
   --memory 2G \
@@ -137,7 +137,7 @@ curl -X POST "https://your-app-url/research-pipeline" \
 ### Environment Variables
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `PORT` | Server port | 8000 |
+| `PORT` | Server port | 8080 |
 | `DB_PATH` | SQLite database path | /app/data/cloud_ratings.db |
 | `ES_URL` | Elasticsearch URL | Required |
 | `ES_USER` | Elasticsearch username | Required |

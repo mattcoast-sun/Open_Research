@@ -25,14 +25,17 @@ if __name__ == "__main__":
         print("Please check your .env file.")
         exit(1)
     
+    # Use PORT environment variable for consistency with deployment
+    port = int(os.getenv("PORT", 8080))
+    
     print("🚀 Starting FastAPI server...")
-    print("📊 Dashboard: http://localhost:8001/docs")
-    print("🔍 Health check: http://localhost:8001/health")
+    print(f"📊 Dashboard: http://localhost:{port}/docs")
+    print(f"🔍 Health check: http://localhost:{port}/health")
     
     uvicorn.run(
         "main:app",
         host="0.0.0.0",
-        port=8001,
+        port=port,
         reload=False,
         log_level="info"
     )
