@@ -86,54 +86,14 @@ def get_query_embedding(text: str, es_client: Optional[Elasticsearch] = None, ex
         resp = client.embeddings.create(model=OPENAI_EMBEDDING_MODEL, input=text)
         vec = resp.data[0].embedding
     elif mode == "hf":
-        # Use Hugging Face Inference for the same model as documents (e.g., 384 dims)
-        headers = _init_hf()
-        import requests
-
-        # Try the Hugging Face transformers.js API endpoint instead 
-        # This should work for sentence-transformers models
-        api_url = get_env("HF_API_URL", f"https://api-inference.huggingface.co/pipeline/feature-extraction/{MODEL_NAME}")
-        payload = {
-            "inputs": text,
-            "options": {"wait_for_model": True}
-        }
-        r = requests.post(api_url, headers=headers, json=payload, timeout=30)
-        if not r.ok:
-            logger.error("HF API error %d: %s", r.status_code, r.text)
-            # Try alternative endpoint format
-            api_url = get_env("HF_API_URL", f"https://api-inference.huggingface.co/models/{MODEL_NAME}")
-            payload = {
-                "inputs": [text],
-                "options": {"wait_for_model": True, "use_cache": False}
-            }
-            r = requests.post(api_url, headers=headers, json=payload, timeout=30)
-            if not r.ok:
-                logger.error("HF API error (fallback) %d: %s", r.status_code, r.text)
-        r.raise_for_status()
-        output = r.json()
-        
-        # Handle different response formats
-        if isinstance(output, list):
-            if output and isinstance(output[0], (int, float)):
-                # Direct vector
-                vec = output  # type: ignore[assignment]
-            elif output and isinstance(output[0], list):
-                if isinstance(output[0][0], (int, float)):
-                    # Single sentence: [[embedding]]
-                    vec = output[0]  # type: ignore[assignment] 
-                else:
-                    # Token embeddings: need to pool
-                    token_vectors = output[0]
-                    dims = len(token_vectors[0])
-                    sums = [0.0] * dims
-                    for tv in token_vectors:
-                        for i in range(dims):
-                            sums[i] += float(tv[i])
-                    vec = [s / float(len(token_vectors)) for s in sums]
-            else:
-                raise ValueError(f"Unexpected HF output format: {type(output[0])}")
-        else:
-            raise ValueError(f"Unexpected HF embedding output format: {type(output)}")
+        # HF Inference API is unreliable for sentence-transformers
+        # For production torch-free deployment, we recommend using OpenAI embeddings
+        # with graceful fallback to text search (which works excellently)
+        raise ValueError(
+            "HF embeddings mode is currently not supported due to API limitations. "
+            "Use EMBEDDINGS_MODE=openai for torch-free deployment. "
+            "The app will gracefully fall back to text search if embeddings fail."
+        )
     elif mode == "local":
         from sentence_transformers import SentenceTransformer  # requires torch
         model_name = MODEL_NAME
