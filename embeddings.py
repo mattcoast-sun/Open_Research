@@ -25,7 +25,7 @@ def get_env(name: str, default: Optional[str] = None) -> Optional[str]:
     return value if value is not None and value != "" else default
 
 
-EMBEDDINGS_MODE = get_env("EMBEDDINGS_MODE", "hf").lower().strip()
+EMBEDDINGS_MODE = get_env("EMBEDDINGS_MODE", "openai").lower().strip()
 MODEL_NAME = get_env("MODEL_NAME", "sentence-transformers/all-MiniLM-L6-v2")
 OPENAI_EMBEDDING_MODEL = get_env("OPENAI_EMBEDDING_MODEL", "text-embedding-3-small")
 
@@ -90,33 +90,50 @@ def get_query_embedding(text: str, es_client: Optional[Elasticsearch] = None, ex
         headers = _init_hf()
         import requests
 
-        # Default to sentence-transformers feature-extraction pipeline
-        # Public Inference API endpoint for models: https://api-inference.huggingface.co/models/{MODEL_NAME}
-        api_url = get_env("HF_API_URL", f"https://api-inference.huggingface.co/models/{MODEL_NAME}")
-        payload = {"inputs": text}
+        # Try the Hugging Face transformers.js API endpoint instead 
+        # This should work for sentence-transformers models
+        api_url = get_env("HF_API_URL", f"https://api-inference.huggingface.co/pipeline/feature-extraction/{MODEL_NAME}")
+        payload = {
+            "inputs": text,
+            "options": {"wait_for_model": True}
+        }
         r = requests.post(api_url, headers=headers, json=payload, timeout=30)
+        if not r.ok:
+            logger.error("HF API error %d: %s", r.status_code, r.text)
+            # Try alternative endpoint format
+            api_url = get_env("HF_API_URL", f"https://api-inference.huggingface.co/models/{MODEL_NAME}")
+            payload = {
+                "inputs": [text],
+                "options": {"wait_for_model": True, "use_cache": False}
+            }
+            r = requests.post(api_url, headers=headers, json=payload, timeout=30)
+            if not r.ok:
+                logger.error("HF API error (fallback) %d: %s", r.status_code, r.text)
         r.raise_for_status()
         output = r.json()
-        # The feature-extraction pipeline returns a 2D list (tokens x dims) or a pooled vector.
-        # For sentence-transformers models, we expect a single pooled vector.
-        if isinstance(output, list) and output and isinstance(output[0], (int, float)):
-            vec = output  # type: ignore[assignment]
-        elif isinstance(output, list) and output and isinstance(output[0], list):
-            # pool by mean over tokens
-            import numpy as np  # lightweight; but avoid if not installed
-            try:
-                vec = np.asarray(output).mean(axis=0).astype(float).tolist()  # type: ignore
-            except Exception:
-                # fallback manual mean without numpy
-                token_vectors = output
-                dims = len(token_vectors[0])
-                sums = [0.0] * dims
-                for tv in token_vectors:
-                    for i in range(dims):
-                        sums[i] += float(tv[i])
-                vec = [s / float(len(token_vectors)) for s in sums]
+        
+        # Handle different response formats
+        if isinstance(output, list):
+            if output and isinstance(output[0], (int, float)):
+                # Direct vector
+                vec = output  # type: ignore[assignment]
+            elif output and isinstance(output[0], list):
+                if isinstance(output[0][0], (int, float)):
+                    # Single sentence: [[embedding]]
+                    vec = output[0]  # type: ignore[assignment] 
+                else:
+                    # Token embeddings: need to pool
+                    token_vectors = output[0]
+                    dims = len(token_vectors[0])
+                    sums = [0.0] * dims
+                    for tv in token_vectors:
+                        for i in range(dims):
+                            sums[i] += float(tv[i])
+                    vec = [s / float(len(token_vectors)) for s in sums]
+            else:
+                raise ValueError(f"Unexpected HF output format: {type(output[0])}")
         else:
-            raise ValueError("Unexpected HF embedding output format")
+            raise ValueError(f"Unexpected HF embedding output format: {type(output)}")
     elif mode == "local":
         from sentence_transformers import SentenceTransformer  # requires torch
         model_name = MODEL_NAME
