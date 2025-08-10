@@ -25,10 +25,10 @@ import sqlite3
 import logging
 from dotenv import load_dotenv
 from elasticsearch import Elasticsearch
-from sentence_transformers import SentenceTransformer
 import openai
 from openai import OpenAI
 from system_prompt import system_prompt
+from embeddings import EMBEDDINGS_MODE, get_query_embedding, get_dense_vector_dims
 
 # Configure production logging
 logging.basicConfig(
@@ -86,7 +86,7 @@ BASE_INDEX = os.getenv("INDEX", "cloud_providers")
 CLOUDS_INDEX = f"{BASE_INDEX}_providers" if BASE_INDEX != "providers" else "cloud_providers"
 BEST_PRACTICES_INDEX = f"{BASE_INDEX}_best_practices" if BASE_INDEX != "providers" else "cloud_best_practices"
 
-# Model configuration
+# Model configuration (for reference only when using local ST)
 MODEL_NAME = os.getenv("MODEL_NAME", "sentence-transformers/all-MiniLM-L6-v2")
 
 # OpenAI configuration
@@ -139,8 +139,7 @@ except Exception as e:
     # Create a dummy client for graceful degradation
     es = None
 
-# Initialize sentence transformer model
-model = SentenceTransformer(MODEL_NAME)
+# No local model initialization here; query embeddings are provided by embeddings module
 
 # ============================================================================
 # Data Models
@@ -922,9 +921,10 @@ async def vector_search(request: VectorSearchRequest) -> VectorSearchResponse:
         )
     
     try:
-        # Generate query embedding
+        # Generate query embedding via configured backend
         embedding_start = time.time()
-        query_vector = model.encode(request.clarified_query, normalize_embeddings=True).tolist()
+        dims = get_dense_vector_dims(es, CLOUDS_INDEX, "body_vector")
+        query_vector = get_query_embedding(request.clarified_query, es_client=es, expected_dims=dims)
         embedding_time = time.time() - embedding_start
         
         # Search both indices with vector similarity
