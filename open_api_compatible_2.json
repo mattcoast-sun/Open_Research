@@ -459,48 +459,30 @@
               "description": "The user's initial or follow-up query"
             },
             "session_id": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "string",
               "title": "Session Id",
-              "description": "Session ID for maintaining conversation state"
+              "description": "Session ID for maintaining conversation state",
+              "nullable": true
             },
             "previous_questions": {
-              "anyOf": [
-                {
-                  "items": {
-                    "type": "string"
-                  },
-                  "type": "array"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
               "title": "Previous Questions",
               "description": "Previously asked clarification questions",
-              "default": []
+              "default": [],
+              "nullable": true
             },
             "previous_answers": {
-              "anyOf": [
-                {
-                  "items": {
-                    "type": "string"
-                  },
-                  "type": "array"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
               "title": "Previous Answers",
               "description": "User's previous answers",
-              "default": []
+              "default": [],
+              "nullable": true
             }
           },
           "type": "object",
@@ -518,30 +500,17 @@
               "description": "Session ID for tracking conversation"
             },
             "question": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "string",
               "title": "Question",
-              "description": "Next clarification question to ask user"
+              "description": "Next clarification question to ask user",
+              "nullable": true
             },
             "status": {
               "$ref": "#/components/schemas/QueryStatus",
               "description": "Current status of clarification process"
             },
             "clarified_query": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "string", "nullable": true,
               "title": "Clarified Query",
               "description": "Final clarified query when complete"
             },
@@ -568,27 +537,13 @@
               "description": "Natural language question about cloud ratings data"
             },
             "execute_query": {
-              "anyOf": [
-                {
-                  "type": "boolean"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "boolean", "nullable": true,
               "title": "Execute Query",
               "description": "Whether to execute the generated query",
               "default": true
             },
             "query_type": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "string", "nullable": true,
               "title": "Query Type",
               "description": "Type of query: analysis, comparison, ranking, or specific",
               "default": "analysis"
@@ -673,14 +628,7 @@
               "description": "Natural language question about cloud ratings data"
             },
             "query_type": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "string", "nullable": true,
               "title": "Query Type",
               "description": "Type of query: analysis, comparison, ranking, or specific",
               "default": "analysis"
@@ -755,21 +703,15 @@
               "description": "Results from vector database search"
             },
             "sql_context": {
-              "anyOf": [
-                {
-                  "items": {
-                    "additionalProperties": true,
-                    "type": "object"
-                  },
-                  "type": "array"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "array",
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
               "title": "Sql Context",
               "description": "Additional SQL query results",
-              "default": []
+              "default": [],
+              "nullable": true
             }
           },
           "type": "object",
@@ -804,20 +746,14 @@
               "description": "Confidence in the answer quality (0-1)"
             },
             "additional_recommendations": {
-              "anyOf": [
-                {
-                  "items": {
-                    "type": "string"
-                  },
-                  "type": "array"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
               "title": "Additional Recommendations",
               "description": "Additional research suggestions",
-              "default": []
+              "default": [],
+              "nullable": true
             }
           },
           "type": "object",
@@ -837,40 +773,19 @@
               "description": "The user's research question"
             },
             "max_clarification_questions": {
-              "anyOf": [
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "integer", "nullable": true,
               "title": "Max Clarification Questions",
               "description": "Maximum clarification questions to ask (0-3)",
               "default": 2
             },
             "max_results": {
-              "anyOf": [
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "integer", "nullable": true,
               "title": "Max Results",
               "description": "Maximum number of vector search results",
               "default": 10
             },
             "skip_clarification": {
-              "anyOf": [
-                {
-                  "type": "boolean"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "boolean", "nullable": true,
               "title": "Skip Clarification",
               "description": "Skip clarification step and proceed directly",
               "default": false
@@ -891,14 +806,7 @@
               "description": "The original user question"
             },
             "clarified_query": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "string", "nullable": true,
               "title": "Clarified Query",
               "description": "The clarified query after processing"
             },
@@ -981,14 +889,7 @@
               "description": "The user's clarified research question"
             },
             "schema_context": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "string", "nullable": true,
               "title": "Schema Context",
               "description": "Additional schema context if available"
             }
@@ -1030,8 +931,9 @@
         "ValidationError": {
           "properties": {
             "loc": {
+              "type": "array",
               "items": {
-                "anyOf": [
+                "oneOf": [
                   {
                     "type": "string"
                   },
@@ -1040,7 +942,6 @@
                   }
                 ]
               },
-              "type": "array",
               "title": "Location"
             },
             "msg": {
@@ -1068,31 +969,18 @@
               "description": "The user's clarified research question"
             },
             "sql_results": {
-              "anyOf": [
-                {
-                  "items": {
-                    "additionalProperties": true,
-                    "type": "object"
-                  },
-                  "type": "array"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "array",
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
               "title": "Sql Results",
               "description": "Results from SQL query execution",
-              "default": []
+              "default": [],
+              "nullable": true
             },
             "max_results": {
-              "anyOf": [
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "integer", "nullable": true,
               "title": "Max Results",
               "description": "Maximum number of results to return",
               "default": 10
