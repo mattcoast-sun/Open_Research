@@ -1517,6 +1517,153 @@ async def combined_research_pipeline(request: CombinedResearchRequest) -> Combin
         )
 
 # ============================================================================
+# Text-Only Research Pipeline Endpoint
+# ============================================================================
+
+@app.post("/research-pipeline-text", 
+         summary="Combined Research Pipeline - Text Only",
+         description="Text-only version of the combined research pipeline with guaranteed SQL database querying",
+         response_model=str)
+async def combined_research_pipeline_text(request: CombinedResearchRequest) -> str:
+    """
+    Text-only Combined Research Pipeline that:
+    1. Always queries the SQL database for cloud ratings data
+    2. Performs vector search with SQL context
+    3. Returns a clean text response (no JSON structure)
+    4. Focuses on actionable insights from both data sources
+    """
+    
+    import time
+    start_time = time.time()
+    
+    try:
+        # Step 1: Query enhancement (simplified for text output)
+        clarified_query = request.question
+        if not request.skip_clarification:
+            try:
+                clarification_prompt = f"""
+                Enhance this research question to be more specific and searchable:
+                "{request.question}"
+                
+                Make it more comprehensive while maintaining the original intent.
+                Return only the enhanced query:
+                """
+                
+                response = openai_client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[
+                        {"role": "system", "content": "You are a research query optimizer."},
+                        {"role": "user", "content": clarification_prompt}
+                    ],
+                    max_tokens=150,
+                    temperature=0.3
+                )
+                clarified_query = response.choices[0].message.content.strip()
+            except:
+                clarified_query = request.question
+        
+        # Step 2: ALWAYS query SQL database for cloud ratings data
+        cloud_sql_results = []
+        sql_summary = ""
+        
+        try:
+            # Force SQL execution regardless of query content
+            cloud_sql_request = CloudRatingsSQLExecutionRequest(
+                question=clarified_query,
+                execute_query=True,
+                query_type="analysis"
+            )
+            cloud_sql_response = await cloud_ratings_sql_executor(cloud_sql_request)
+            cloud_sql_results = cloud_sql_response.query_results
+            
+            # Create a summary of SQL results for text output
+            if cloud_sql_results:
+                sql_summary = f"Database Analysis ({len(cloud_sql_results)} records found):\n"
+                for i, result in enumerate(cloud_sql_results[:5]):  # Limit to first 5 results
+                    sql_summary += f"• {result}\n"
+                if len(cloud_sql_results) > 5:
+                    sql_summary += f"... and {len(cloud_sql_results) - 5} more results\n"
+            else:
+                sql_summary = "Database Analysis: No specific matching records found in cloud ratings database.\n"
+                
+        except Exception as e:
+            sql_summary = f"Database Analysis: Error querying cloud ratings database - {str(e)}\n"
+        
+        # Step 3: Vector search with SQL context
+        vector_request = VectorSearchRequest(
+            clarified_query=clarified_query,
+            sql_results=cloud_sql_results,
+            max_results=request.max_results
+        )
+        vector_response = await vector_search(vector_request)
+        
+        # Step 4: Generate text-only comprehensive answer
+        text_prompt = f"""
+        Based on the research question: "{request.question}"
+        Enhanced query: "{clarified_query}"
+        
+        SQL Database Results:
+        {sql_summary}
+        
+        Vector Search Results ({vector_response.total_found} found):
+        """
+        
+        # Add vector search results summary
+        for i, result in enumerate(vector_response.results):
+            text_prompt += f"\n{i+1}. {result.title} (Score: {result.similarity_score:.3f})\n"
+            text_prompt += f"   {result.content_snippet[:200]}...\n"
+        
+        text_prompt += f"""
+        
+        Please provide a comprehensive, actionable answer that:
+        1. Directly addresses the user's question
+        2. Synthesizes insights from both the SQL database and vector search results
+        3. Provides specific recommendations where applicable
+        4. Mentions relevant cloud providers, best practices, or technical details
+        5. Is formatted as clean, readable text (not JSON)
+        6. Includes confidence level in your assessment
+        
+        Focus on practical, actionable insights that help the user make informed decisions.
+        """
+        
+        # Generate final text response
+        final_response = openai_client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "You are an expert cloud and technology consultant providing clear, actionable advice."},
+                {"role": "user", "content": text_prompt}
+            ],
+            max_tokens=1500,
+            temperature=0.3
+        )
+        
+        final_text = final_response.choices[0].message.content.strip()
+        
+        return final_text
+        
+    except Exception as e:
+        # Fallback text response
+        return f"""
+I encountered an issue while processing your research question: "{request.question}"
+
+Error: {str(e)}
+
+While I cannot provide the full analysis at this time, here are some general recommendations:
+
+1. Ensure your question is clear and specific
+2. Consider breaking down complex queries into simpler parts  
+3. Try rephrasing technical questions for better results
+
+For cloud-related questions, consider asking about:
+- Specific cloud providers (AWS, Azure, GCP, IBM Cloud, etc.)
+- Performance, cost, or security comparisons
+- Best practices for specific technologies or use cases
+- Implementation recommendations for your requirements
+
+Please try again with a refined question, or contact support if issues persist.
+"""
+
+# ============================================================================
 # Health Check and Utility Endpoints
 # ============================================================================
 
@@ -1539,7 +1686,8 @@ async def root():
             "/cloud-ratings-sql-execute",
             "/vector-search",
             "/cohesive-answer",
-            "/research-pipeline"
+            "/research-pipeline",
+            "/research-pipeline-text"
         ],
         "docs": "/docs"
     }
