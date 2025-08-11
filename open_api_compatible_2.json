@@ -15,11 +15,7 @@
     },
     "servers": [
       {
-        "url": "http://localhost:8080",
-        "description": "Local development server"
-      },
-      {
-        "url": "https://your-production-url.com",
+        "url": "https://researcher.ngrok.dev",
         "description": "Production server"
       }
     ],
