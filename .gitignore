@@ -118,6 +118,8 @@ temp/
 
 # Docker
 .dockerignore
+*.tar.gz
+*.tar
 
 # Jupyter Notebook
 .ipynb_checkpoints
