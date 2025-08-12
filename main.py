@@ -83,9 +83,9 @@ CLOUD_ID = get_first_env(["CLOUD_ID", "ELASTIC_CLOUD_ID"]) or None
 API_KEY = get_first_env(["ES_API_KEY", "ELASTIC_API_KEY", "API_KEY"]) or None
 
 # Index configuration
-BASE_INDEX = os.getenv("INDEX", "cloud_providers")
-CLOUDS_INDEX = f"{BASE_INDEX}_providers" if BASE_INDEX != "providers" else "cloud_providers"
-BEST_PRACTICES_INDEX = f"{BASE_INDEX}_best_practices" if BASE_INDEX != "providers" else "cloud_best_practices"
+BASE_INDEX = os.getenv("INDEX", "providers")
+CLOUDS_INDEX = f"cloud_{BASE_INDEX}" if BASE_INDEX == "providers" else f"{BASE_INDEX}_providers"
+BEST_PRACTICES_INDEX = f"cloud_best_practices" if BASE_INDEX == "providers" else f"{BASE_INDEX}_best_practices"
 INNOVATIVE_IDEAS_INDEX = "innovative_ideas"
 TECH_TRENDS_INDEX = "tech_trends_innovation"
 
