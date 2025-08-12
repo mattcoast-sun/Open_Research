@@ -1640,6 +1640,112 @@ async def health_check():
     """Simple health check endpoint"""
     return {"status": "healthy", "timestamp": datetime.now()}
 
+@app.get("/diagnostic/elasticsearch", summary="Elasticsearch Diagnostic", description="Diagnose Elasticsearch connection and indices")
+async def elasticsearch_diagnostic():
+    """Diagnostic endpoint for Elasticsearch issues on Railway"""
+    
+    result = {
+        "status": "checking",
+        "elasticsearch": {},
+        "indices": {},
+        "environment": {},
+        "recommendations": []
+    }
+    
+    # Check environment variables
+    result["environment"] = {
+        "ES_URL": ES_URL,
+        "ES_USER": ES_USER,
+        "CLOUD_ID": "Set" if CLOUD_ID else "Not set",
+        "API_KEY": "Set" if API_KEY else "Not set",
+        "OPENAI_API_KEY": "Set" if OPENAI_API_KEY else "Not set",
+        "CLOUDS_INDEX": CLOUDS_INDEX,
+        "BEST_PRACTICES_INDEX": BEST_PRACTICES_INDEX
+    }
+    
+    # Test Elasticsearch connection
+    try:
+        if es and es.ping():
+            info = es.info()
+            result["elasticsearch"] = {
+                "connected": True,
+                "version": info.get('version', {}).get('number', 'unknown'),
+                "cluster_name": info.get('cluster_name', 'unknown')
+            }
+        else:
+            result["elasticsearch"] = {
+                "connected": False,
+                "error": "Cannot ping Elasticsearch"
+            }
+            result["recommendations"].append("Check Elasticsearch connection settings")
+            
+    except Exception as e:
+        result["elasticsearch"] = {
+            "connected": False,
+            "error": str(e)
+        }
+        result["recommendations"].append(f"Elasticsearch connection error: {str(e)}")
+    
+    # Check indices if connected
+    if result["elasticsearch"].get("connected"):
+        expected_indices = [
+            CLOUDS_INDEX,
+            BEST_PRACTICES_INDEX,
+            INNOVATIVE_IDEAS_INDEX,
+            TECH_TRENDS_INDEX
+        ]
+        
+        result["indices"] = {
+            "expected": expected_indices,
+            "existing": [],
+            "missing": [],
+            "details": {}
+        }
+        
+        for index_name in expected_indices:
+            try:
+                if es.indices.exists(index=index_name):
+                    count_result = es.count(index=index_name)
+                    doc_count = count_result.get('count', 0)
+                    result["indices"]["existing"].append(index_name)
+                    result["indices"]["details"][index_name] = {
+                        "exists": True,
+                        "document_count": doc_count
+                    }
+                else:
+                    result["indices"]["missing"].append(index_name)
+                    result["indices"]["details"][index_name] = {
+                        "exists": False,
+                        "document_count": 0
+                    }
+            except Exception as e:
+                result["indices"]["missing"].append(index_name)
+                result["indices"]["details"][index_name] = {
+                    "exists": False,
+                    "error": str(e)
+                }
+        
+        # Add recommendations based on findings
+        if result["indices"]["missing"]:
+            result["recommendations"].append("Missing indices detected - need to upload data")
+            result["recommendations"].append("Run upload script: python upload_data_multi_model.py")
+            result["recommendations"].append("Or use the /upload-data endpoint if available")
+            result["status"] = "indices_missing"
+        else:
+            result["status"] = "healthy"
+    
+    # List all existing indices
+    try:
+        if es and es.ping():
+            all_indices = es.indices.get_alias("*")
+            result["all_indices"] = list(all_indices.keys()) if all_indices else []
+        else:
+            result["all_indices"] = []
+    except:
+        result["all_indices"] = []
+    
+    return result
+
 @app.get("/", summary="Service Information", description="Get information about the service")
 async def root():
     """Root endpoint with service information"""
