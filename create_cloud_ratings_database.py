@@ -139,7 +139,11 @@ def create_summary_view(conn: sqlite3.Connection) -> None:
         ai_capabilities,
         performance,
         cost_efficiency,
+        flexibility,
+        customer_service,
         sustainability_score,
+        ecosystem_innovation,
+        data_sovereignty_strength,
         scoring_version,
         last_updated
     FROM cloud_ratings

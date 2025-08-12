@@ -1,0 +1,963 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Research Query Processing Tools",
+    "description": "AI-powered research tools for watsonx Orchestrate with multi-model embeddings, cloud ratings analysis, and comprehensive answer generation",
+    "version": "2.0.0",
+    "contact": {
+      "name": "Research Tools Support",
+      "url": "https://researcherlegend-production.up.railway.app/docs"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://researcherlegend-production.up.railway.app",
+      "description": "Production API Server (Railway)"
+    }
+  ],
+  "paths": {
+    "/research-pipeline": {
+      "post": {
+        "summary": "Complete Research Pipeline",
+        "description": "End-to-end research workflow that combines clarification, SQL analysis, vector search, and answer synthesis into a single comprehensive response",
+        "operationId": "complete_research_pipeline",
+        "tags": ["Research Workflows"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CombinedResearchRequest"
+              },
+              "examples": {
+                "cloud_comparison": {
+                  "summary": "Cloud Provider Comparison",
+                  "value": {
+                    "question": "What are the best cloud providers for AI workloads?",
+                    "max_results": 10,
+                    "skip_clarification": false
+                  }
+                },
+                "cost_optimization": {
+                  "summary": "Cost Optimization Query",
+                  "value": {
+                    "question": "How can I optimize costs for my cloud infrastructure?",
+                    "max_results": 8,
+                    "skip_clarification": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Comprehensive research response with sources and metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CombinedResearchResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/clarification-agent": {
+      "post": {
+        "summary": "Query Clarification Agent",
+        "description": "Enhances user queries by improving grammar, adding context, and optimizing for better search results",
+        "operationId": "clarify_user_query",
+        "tags": ["Query Processing"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClarificationRequest"
+              },
+              "examples": {
+                "basic_query": {
+                  "summary": "Basic Query Enhancement",
+                  "value": {
+                    "user_query": "best cloud for AI"
+                  }
+                },
+                "technical_query": {
+                  "summary": "Technical Query Enhancement",
+                  "value": {
+                    "user_query": "serverless vs containers cost"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enhanced query with improvements listed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClarificationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cloud-ratings-sql": {
+      "post": {
+        "summary": "Cloud Ratings SQL Generator",
+        "description": "Generates and optionally executes SQLite queries for cloud provider ratings analysis",
+        "operationId": "generate_cloud_ratings_sql",
+        "tags": ["Data Analysis"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CloudRatingsSQLRequest"
+              },
+              "examples": {
+                "top_providers": {
+                  "summary": "Top Cloud Providers",
+                  "value": {
+                    "question": "Show me the top 5 cloud providers by aggregate score",
+                    "execute_query": true,
+                    "query_type": "ranking"
+                  }
+                },
+                "cost_comparison": {
+                  "summary": "Cost Efficiency Comparison",
+                  "value": {
+                    "question": "Compare AWS, GCP, and Azure on cost efficiency",
+                    "execute_query": true,
+                    "query_type": "comparison"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Generated SQL query with optional execution results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CloudRatingsSQLResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vector-search": {
+      "post": {
+        "summary": "Multi-Model Vector Search",
+        "description": "Performs semantic similarity search across multiple knowledge bases using configurable embedding models",
+        "operationId": "search_vector_database",
+        "tags": ["Search"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VectorSearchRequest"
+              },
+              "examples": {
+                "simple_search": {
+                  "summary": "Simple Vector Search",
+                  "value": {
+                    "clarified_query": "cloud security best practices",
+                    "max_results": 10
+                  }
+                },
+                "contextual_search": {
+                  "summary": "Search with SQL Context",
+                  "value": {
+                    "clarified_query": "AI capabilities comparison",
+                    "sql_results": [
+                      {
+                        "provider": "AWS",
+                        "ai_capabilities": 9.2
+                      }
+                    ],
+                    "max_results": 8
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Vector search results with similarity scores and metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VectorSearchResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vector-search-multi-model": {
+      "post": {
+        "summary": "Advanced Multi-Model Vector Search",
+        "description": "Performs vector search using specific embedding models or ensemble methods for enhanced accuracy",
+        "operationId": "search_with_multiple_models",
+        "tags": ["Search", "Advanced"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MultiModelSearchRequest"
+              },
+              "examples": {
+                "single_model": {
+                  "summary": "Search with OpenAI Model",
+                  "value": {
+                    "query": "sustainable cloud computing practices",
+                    "model_key": "v2",
+                    "max_results": 10
+                  }
+                },
+                "ensemble_search": {
+                  "summary": "Ensemble Search",
+                  "value": {
+                    "query": "kubernetes optimization strategies",
+                    "model_keys": ["v1", "v2"],
+                    "ensemble_method": "average",
+                    "max_results": 8
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Multi-model search results with ensemble metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultiModelSearchResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cohesive-answer": {
+      "post": {
+        "summary": "Comprehensive Answer Generator",
+        "description": "Synthesizes research findings from multiple sources into a comprehensive, well-structured answer",
+        "operationId": "generate_comprehensive_answer",
+        "tags": ["Answer Generation"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CohesiveAnswerRequest"
+              },
+              "examples": {
+                "with_sources": {
+                  "summary": "Answer from Vector Results",
+                  "value": {
+                    "original_query": "What are the advantages of serverless computing?",
+                    "vector_results": [
+                      {
+                        "document_id": "doc_1",
+                        "similarity_score": 0.95,
+                        "title": "Serverless Architecture Benefits",
+                        "content_snippet": "Serverless computing offers cost efficiency..."
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Comprehensive answer with sources and recommendations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CohesiveAnswerResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cohesive-answer-auto": {
+      "post": {
+        "summary": "Automated Answer Generation",
+        "description": "Convenience endpoint that automatically performs vector search and generates comprehensive answer in one step",
+        "operationId": "generate_answer_automatically",
+        "tags": ["Answer Generation", "Convenience"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CohesiveAnswerAutoRequest"
+              },
+              "examples": {
+                "auto_research": {
+                  "summary": "Automated Research Query",
+                  "value": {
+                    "query": "How do I choose between AWS and Azure for machine learning?",
+                    "max_results": 10
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Comprehensive answer with automatic source gathering",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CohesiveAnswerResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Health Check",
+        "description": "Checks the health status of the research tools service",
+        "operationId": "check_service_health",
+        "tags": ["System"],
+        "responses": {
+          "200": {
+            "description": "Service is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "healthy"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CombinedResearchRequest": {
+        "type": "object",
+        "required": ["question"],
+        "properties": {
+          "question": {
+            "type": "string",
+            "description": "The research question to be processed",
+            "example": "What are the best cloud providers for AI workloads with high performance requirements?"
+          },
+          "max_clarification_questions": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3,
+            "default": 2,
+            "description": "Maximum number of clarification questions to generate (0-3)"
+          },
+          "max_results": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "default": 10,
+            "description": "Maximum number of vector search results to include"
+          },
+          "skip_clarification": {
+            "type": "boolean",
+            "default": false,
+            "description": "Skip the query clarification step and proceed directly to search"
+          }
+        }
+      },
+      "CombinedResearchResponse": {
+        "type": "object",
+        "required": ["original_question", "final_answer", "sources", "confidence_score", "additional_recommendations", "processing_metadata"],
+        "properties": {
+          "original_question": {
+            "type": "string",
+            "description": "The original user question as submitted"
+          },
+          "clarified_query": {
+            "type": "string",
+            "description": "The enhanced and clarified version of the query"
+          },
+          "final_answer": {
+            "type": "string",
+            "description": "Comprehensive answer synthesized from all available sources"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SourceReference"
+            },
+            "description": "List of sources and references used in the answer"
+          },
+          "confidence_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Overall confidence in the answer accuracy (0-1)"
+          },
+          "additional_recommendations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Additional research suggestions and next steps"
+          },
+          "processing_metadata": {
+            "type": "object",
+            "description": "Detailed metadata about the processing pipeline",
+            "properties": {
+              "total_processing_time": {
+                "type": "string",
+                "description": "Total time taken for processing"
+              },
+              "steps_completed": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "List of processing steps completed"
+              },
+              "vector_results_found": {
+                "type": "integer",
+                "description": "Number of vector search results found"
+              }
+            }
+          }
+        }
+      },
+      "ClarificationRequest": {
+        "type": "object",
+        "required": ["user_query"],
+        "properties": {
+          "user_query": {
+            "type": "string",
+            "description": "The user's query that needs enhancement and clarification",
+            "example": "best cloud for AI"
+          }
+        }
+      },
+      "ClarificationResponse": {
+        "type": "object",
+        "required": ["clarified_query", "improvements_made", "confidence_score"],
+        "properties": {
+          "clarified_query": {
+            "type": "string",
+            "description": "Enhanced and clarified version of the user's query",
+            "example": "What are the best cloud providers for artificial intelligence workloads considering performance, cost efficiency, and AI-specific services?"
+          },
+          "improvements_made": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of specific improvements made to the original query",
+            "example": ["Expanded AI abbreviation", "Added context for evaluation criteria", "Improved technical terminology"]
+          },
+          "confidence_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Confidence in the quality of clarification (0-1)"
+          }
+        }
+      },
+      "CloudRatingsSQLRequest": {
+        "type": "object",
+        "required": ["question"],
+        "properties": {
+          "question": {
+            "type": "string",
+            "description": "Natural language question about cloud provider ratings",
+            "example": "Which cloud providers have the highest AI capabilities scores?"
+          },
+          "execute_query": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether to execute the generated SQL query and return results"
+          },
+          "query_type": {
+            "type": "string",
+            "enum": ["analysis", "comparison", "ranking", "specific"],
+            "default": "analysis",
+            "description": "Type of analysis to perform"
+          }
+        }
+      },
+      "CloudRatingsSQLResponse": {
+        "type": "object",
+        "required": ["sql_query", "explanation", "confidence_score", "query_type"],
+        "properties": {
+          "sql_query": {
+            "type": "string",
+            "description": "Generated SQLite query for the cloud ratings database"
+          },
+          "explanation": {
+            "type": "string",
+            "description": "Plain English explanation of what the query does"
+          },
+          "example_usage": {
+            "type": "string",
+            "description": "Example of how to execute the query"
+          },
+          "confidence_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Confidence in the query accuracy (0-1)"
+          },
+          "query_type": {
+            "type": "string",
+            "description": "Detected type of query performed"
+          },
+          "estimated_results": {
+            "type": "string",
+            "description": "Description of expected results"
+          },
+          "query_results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "description": "Actual query execution results (if executed)"
+          },
+          "column_names": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Names of columns in the results (if executed)"
+          },
+          "row_count": {
+            "type": "integer",
+            "description": "Number of rows returned (if executed)"
+          },
+          "execution_time": {
+            "type": "number",
+            "description": "Query execution time in seconds (if executed)"
+          },
+          "execution_success": {
+            "type": "boolean",
+            "description": "Whether query execution was successful (if executed)"
+          }
+        }
+      },
+      "VectorSearchRequest": {
+        "type": "object",
+        "required": ["clarified_query"],
+        "properties": {
+          "clarified_query": {
+            "type": "string",
+            "description": "The enhanced research question for semantic search",
+            "example": "cloud security best practices for enterprise applications"
+          },
+          "sql_results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "default": [],
+            "description": "Optional SQL query results to enhance search context"
+          },
+          "max_results": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "default": 10,
+            "description": "Maximum number of results to return"
+          }
+        }
+      },
+      "VectorSearchResponse": {
+        "type": "object",
+        "required": ["results", "total_found", "search_metadata"],
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SearchResult"
+            },
+            "description": "List of search results with similarity scores"
+          },
+          "total_found": {
+            "type": "integer",
+            "description": "Total number of matching documents found"
+          },
+          "search_metadata": {
+            "type": "object",
+            "description": "Metadata about search execution and performance",
+            "properties": {
+              "search_type": {
+                "type": "string",
+                "description": "Type of search performed"
+              },
+              "total_processing_time": {
+                "type": "string",
+                "description": "Total search processing time"
+              },
+              "indices_searched": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "List of indices searched"
+              }
+            }
+          }
+        }
+      },
+      "MultiModelSearchRequest": {
+        "type": "object",
+        "required": ["query"],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search query for multi-model vector search",
+            "example": "kubernetes deployment best practices"
+          },
+          "model_key": {
+            "type": "string",
+            "enum": ["v1", "v2", "v3"],
+            "description": "Specific embedding model to use (v1=sentence-transformers, v2=OpenAI, v3=mpnet)"
+          },
+          "model_keys": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["v1", "v2", "v3"]
+            },
+            "description": "Multiple models for ensemble search"
+          },
+          "ensemble_method": {
+            "type": "string",
+            "enum": ["average", "max", "weighted"],
+            "default": "average",
+            "description": "Method for combining results from multiple models"
+          },
+          "max_results": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "default": 10,
+            "description": "Maximum number of results to return"
+          }
+        }
+      },
+      "MultiModelSearchResponse": {
+        "type": "object",
+        "required": ["results", "metadata"],
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MultiModelSearchResult"
+            },
+            "description": "Search results with multi-model scoring information"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Multi-model search metadata",
+            "properties": {
+              "models_used": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "List of embedding models used"
+              },
+              "ensemble_method": {
+                "type": "string",
+                "description": "Ensemble method applied"
+              },
+              "search_time": {
+                "type": "string",
+                "description": "Total search execution time"
+              }
+            }
+          }
+        }
+      },
+      "CohesiveAnswerRequest": {
+        "type": "object",
+        "required": ["original_query", "vector_results"],
+        "properties": {
+          "original_query": {
+            "type": "string",
+            "description": "The original research question from the user",
+            "example": "What are the advantages of serverless computing?"
+          },
+          "vector_results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SearchResult"
+            },
+            "description": "Results from vector database search to synthesize"
+          },
+          "sql_context": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "default": [],
+            "description": "Additional structured data context from SQL queries"
+          }
+        }
+      },
+      "CohesiveAnswerResponse": {
+        "type": "object",
+        "required": ["answer", "sources", "confidence_score"],
+        "properties": {
+          "answer": {
+            "type": "string",
+            "description": "Comprehensive, well-structured answer to the user's question"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SourceReference"
+            },
+            "description": "Sources and references used in generating the answer"
+          },
+          "confidence_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Confidence in the answer quality and accuracy (0-1)"
+          },
+          "additional_recommendations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": [],
+            "description": "Additional research suggestions and follow-up topics"
+          }
+        }
+      },
+      "CohesiveAnswerAutoRequest": {
+        "type": "object",
+        "required": ["query"],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Research question for automated processing",
+            "example": "How do I choose between AWS and Azure for machine learning workloads?"
+          },
+          "max_results": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "default": 10,
+            "description": "Maximum number of vector search results to retrieve"
+          }
+        }
+      },
+      "SearchResult": {
+        "type": "object",
+        "required": ["document_id", "similarity_score", "title", "content_snippet"],
+        "properties": {
+          "document_id": {
+            "type": "string",
+            "description": "Unique identifier for the document"
+          },
+          "index": {
+            "type": "string",
+            "description": "Source index name"
+          },
+          "similarity_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Semantic similarity score (0-1)"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title or name of the result"
+          },
+          "content_snippet": {
+            "type": "string",
+            "description": "Relevant content excerpt"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Additional metadata about the result",
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "Type of content (cloud_provider, best_practice, etc.)"
+              },
+              "category": {
+                "type": "string",
+                "description": "Content category"
+              }
+            }
+          }
+        }
+      },
+      "MultiModelSearchResult": {
+        "type": "object",
+        "required": ["document_id", "similarity_score", "title", "content_snippet"],
+        "properties": {
+          "document_id": {
+            "type": "string",
+            "description": "Unique identifier for the document"
+          },
+          "similarity_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Combined similarity score from ensemble method"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title or name of the result"
+          },
+          "content_snippet": {
+            "type": "string",
+            "description": "Relevant content excerpt"
+          },
+          "individual_scores": {
+            "type": "object",
+            "description": "Individual scores from each model",
+            "additionalProperties": {
+              "type": "number"
+            }
+          },
+          "source": {
+            "type": "object",
+            "description": "Full source document data"
+          }
+        }
+      },
+      "SourceReference": {
+        "type": "object",
+        "required": ["title", "type"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Title of the source"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of source (cloud_provider, best_practice, research_paper, etc.)"
+          },
+          "similarity_score": {
+            "type": "string",
+            "description": "Relevance score for this source"
+          },
+          "url": {
+            "type": "string",
+            "description": "URL or reference identifier"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["error", "message"],
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error type"
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable error message"
+          },
+          "details": {
+            "type": "object",
+            "description": "Additional error details"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Research Workflows",
+      "description": "Complete end-to-end research processes"
+    },
+    {
+      "name": "Query Processing",
+      "description": "Query enhancement and clarification tools"
+    },
+    {
+      "name": "Data Analysis",
+      "description": "Structured data analysis and SQL generation"
+    },
+    {
+      "name": "Search",
+      "description": "Vector and semantic search capabilities"
+    },
+    {
+      "name": "Advanced",
+      "description": "Advanced multi-model and ensemble search features"
+    },
+    {
+      "name": "Answer Generation",
+      "description": "Comprehensive answer synthesis tools"
+    },
+    {
+      "name": "Convenience",
+      "description": "Simplified convenience endpoints"
+    },
+    {
+      "name": "System",
+      "description": "System health and utility endpoints"
+    }
+  ],
+  "externalDocs": {
+    "description": "Complete API Documentation and Usage Examples",
+    "url": "https://researcherlegend-production.up.railway.app/docs"
+  }
+}
